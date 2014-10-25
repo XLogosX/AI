@@ -73,4 +73,65 @@ public class Connect4Utilities {
         return board;
     }
 
+    public boolean isColumnFull(char[][] board, int column) {
+        return board[column][0] != '-';
+    }
+
+    public boolean hasPlayerWon(char[][] board, char playerSymbol) {
+        boolean win = false;
+        int COL_SIZE = board.length;
+        int ROW_SIZE = board[0].length;
+
+        //check for win horizontally
+        for (int row = 0; row < ROW_SIZE; row++) {
+            for (int col = 0; col < COL_SIZE - 3; col++) { //0 to 3
+                if (board[col][row] == board[col + 1][row]
+                        && board[col][row] == board[col + 2][row]
+                        && board[col][row] == board[col + 3][row]
+                        && board[col][row] != '-') {
+                    win = true;
+                    break;
+                }
+            }
+        }
+        //check for win vertically
+        for (int row = 0; row < ROW_SIZE - 3; row++) { //0 to 2
+            for (int col = 0; col < COL_SIZE; col++) {
+                if (board[col][row] == board[col][row + 1]
+                        && board[col][row] == board[col][row + 2]
+                        && board[col][row] == board[col][row + 3]
+                        && board[col][row] != '-') {
+                    win = true;
+                    break;
+                }
+
+            }
+        }
+        //check for win diagonally (upper left to lower right)
+        for (int row = 0; row < ROW_SIZE - 3; row++) { //0 to 2
+            for (int col = 0; col < COL_SIZE - 3; col++) { //0 to 3
+                if (board[col][row] == board[col + 1][row + 1]
+                        && board[col][row] == board[col + 2][row + 2]
+                        && board[col][row] == board[col + 3][row + 3]
+                        && board[col][row] != '-') {
+                    win = true;
+                    break;
+                }
+            }
+        }
+        //check for win diagonally (lower left to upper right)
+        for (int row = 3; row < ROW_SIZE; row++) { //3 to 5
+            for (int col = 0; col < COL_SIZE - 3; col++) { //0 to 3
+                if (board[col][row] == board[col + 1][row - 1]
+                        && board[col][row] == board[col + 2][row - 2]
+                        && board[col][row] == board[col + 3][row - 3]
+                        && board[col][row] != '-') {
+                    win = true;
+                    break;
+                }
+            }
+        }
+
+        return win;
+    }
 }
