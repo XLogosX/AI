@@ -1,5 +1,10 @@
 package conn4;
 
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.TreeSet;
+
 import ch.hslu.ai.connect4.Game;
 import ch.hslu.ai.connect4.GameBoard;
 import ch.hslu.ai.connect4.Player;
@@ -26,18 +31,22 @@ public class Connect4 {
 	public static void main(String[] args) {
 		
 		// Create players:
-		Player player1 = new RandomPlayer("Captain Awesome", 'x');
-		Player player2 = new UberBotXtream("Ultra GangstA Fighter X", 'o');
+		Player[] players = {
+			new AlphaBetaBot("Captain Awesome", 'x'),
+			new RandomPlayer("Chuck Norris",    'o'),
+			new RandomPlayer("Sheldon Cooper",  'z'),
+			new RandomPlayer("Homer Simpson",   'w'),
+		};
 		
-		// Start a single game with GUI:
-		singleGameMode(player1, player2);
+		// Start a single game with GUI:	
+		singleGameMode(players[0], players[1]);
 		
 		// Start a tournament with many rounds:
-		//tournamentMode(player1, player2, 10);
+		//tournamentMode(players, 1000);
 	}
 	
 	/**
-	 * Starts a single game with GUI
+	 * Starts a single game with GUI. Remember that Connect-4 has a first mouver advantage. 
 	 * @param player1 The first mover
 	 * @param player2 The second mover
 	 */
@@ -50,31 +59,80 @@ public class Connect4 {
 	
 	/**
 	 * Start blind tournament mode with many rounds
-	 * @param player1 The first mover
-	 * @param player2 The second mover
-	 * @param rounds The number of rounds to be played
+	 * One round consists of two matches such that each player has the first move in one match
+	 * This is important because Connect-4 has a first mover advantage. 
+	 * @param players All players participating in the tournament
+	 * @param rounds The number of rounds (= 2 * number of matches) to be played
 	 */
 	
-	public static void tournamentMode(Player player1, Player player2, int rounds) {
-		int counter1 = 0, counter2 = 0;
-		Game game = new Game(ROWS, COLUMNS, player1, player2);
-		for(int i = 0; i < rounds; i++) {
-			int result = game.startGame();
-			// Player 1 won the game:
-			if(result == 1) {
-				counter1++;
-			}
-			// Player 2 won the game:
-			if(result == 2) {
-				counter2++;
-			}
-			// Game is a draw:
-			if(result == 0) {
-				// do nothing
-			}
-			game.reset();
+	public static void tournamentMode(Player[] players, int rounds) {
+		
+		HashMap<Player, Integer> ranking = new HashMap<Player, Integer>();
+		for(Player p : players) {
+			ranking.put(p, 0);
 		}
-		System.out.println(player1.getName()+" won "+counter1+" times.");
-		System.out.println(player2.getName()+" won "+counter2+" times.");
+		
+		/*
+		 * Start Tournament:
+		 */
+		
+		System.out.println("***********************************************");
+		System.out.println("* Tournament started ...");
+		System.out.println("***********************************************\n");
+		
+		for(int i = 0; i < players.length; i++) {
+			for(int j = 0; j < players.length; j++) {
+	
+				if(i != j) {
+					// Let Player i play Player j
+					Tournament tournament = new Tournament(ROWS, COLUMNS, players[i], players[j]);
+					tournament.play(rounds);
+					
+					// Add number of wins of player 1
+					int v1 = ranking.get(players[i]) + tournament.getWinsOfPlayer1();
+					ranking.put(players[i], v1);
+					
+					// Add number of wins of player 2
+					int v2 = ranking.get(players[j]) + tournament.getWinsOfPlayer2();
+					ranking.put(players[j], v2);				
+					
+					System.out.println(players[i].getName()+" vs. "+players[j].getName()+": "
+							+tournament.getWinsOfPlayer1()+" - "
+							+tournament.getWinsOfPlayer2()+" (draws: "+tournament.getDraws()+")");
+										
+				}
+			}
+		}
+		
+		System.out.println();
+		System.out.println("***********************************************");
+		System.out.println("* Final Ranking ...");
+		System.out.println("***********************************************\n");
+		
+		/*
+		 * Produce Ranking:
+		 */
+		
+		TreeSet<Integer> points = new TreeSet<Integer>(ranking.values()); 
+		Iterator<Integer> iter = points.descendingIterator();
+		
+		int rank = 1;
+		
+		while(iter.hasNext()) {
+			
+			int p = iter.next();
+			
+			System.out.println("Rank "+rank+" with "+p+" points:");
+			for(Player player : ranking.keySet()) {
+				if(ranking.get(player) == p) {
+					System.out.println("\t- "+player.getName());
+				}
+			}
+			
+			System.out.println();
+			
+			rank++;
+		}
+		
 	}
 }

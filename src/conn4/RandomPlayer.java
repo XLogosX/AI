@@ -1,5 +1,6 @@
 package conn4;
 
+
 import ch.hslu.ai.connect4.Player;
 
 /**
@@ -40,7 +41,6 @@ public class RandomPlayer extends Player {
     	do {
     		column = (int)(Math.random() * board.length);
     	} while(board[column][0] != '-');
-    	
     	return column;
     }
 }
