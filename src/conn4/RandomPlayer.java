@@ -1,7 +1,7 @@
 package conn4;
 
-
 import ch.hslu.ai.connect4.Player;
+
 
 /**
  * A random computer player for illustration how to implement the Player interface.

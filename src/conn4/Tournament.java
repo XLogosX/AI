@@ -1,8 +1,9 @@
 package conn4;
 
-
 import ch.hslu.ai.connect4.Game;
 import ch.hslu.ai.connect4.Player;
+
+
 
 /**
  * Connect-4 tournament mode.

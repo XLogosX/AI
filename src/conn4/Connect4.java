@@ -1,13 +1,14 @@
 package conn4;
 
 
+import ch.hslu.ai.connect4.Player;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.TreeSet;
 
 import ch.hslu.ai.connect4.Game;
 import ch.hslu.ai.connect4.GameBoard;
-import ch.hslu.ai.connect4.Player;
+//import ch.hslu.ai.connect4.Player;
 
 /**
  * Main class with connect-4 single game and tournament mode.
@@ -32,17 +33,17 @@ public class Connect4 {
 		
 		// Create players:
 		Player[] players = {
-			new AlphaBetaBot("Captain Awesome", 'x'),
+			new AlphaBetaBot("AlphaBetaBot", 'x'),
 			new RandomPlayer("Chuck Norris",    'o'),
-			new RandomPlayer("Sheldon Cooper",  'z'),
-			new RandomPlayer("Homer Simpson",   'w'),
+
 		};
-		
+//					new RandomPlayer("Sheldon Cooper",  'z'),
+//			new RandomPlayer("Homer Simpson",   'w'),
 		// Start a single game with GUI:	
-		singleGameMode(players[0], players[1]);
+		//singleGameMode(players[0], players[1]);
 		
 		// Start a tournament with many rounds:
-		//tournamentMode(players, 1000);
+		tournamentMode(players, 100);
 	}
 	
 	/**

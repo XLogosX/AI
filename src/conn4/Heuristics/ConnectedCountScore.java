@@ -5,6 +5,7 @@
  */
 package conn4.Heuristics;
 
+import ch.hslu.ai.connect4.Game;
 import conn4.Situation;
 import conn4.Utilities.Connect4Utilities;
 import java.util.ArrayList;
@@ -26,12 +27,12 @@ public class ConnectedCountScore implements IHeuristic {
     Connect4Utilities utilities;
 
     @Override
-    public EvalScoreInfos evaluate(char[][] board, char playerSymbol) {
+    public EvalScoreInfos evaluate(char[][] curBoard, char playerSymbol) {
         scoreInfo = new EvalScoreInfos();
         this.playerSymbol = playerSymbol;
-        maxCol = board.length;
-        maxRow = board[0].length;
-        this.curBoard = board;
+        maxCol = curBoard.length;
+        maxRow = curBoard[0].length;
+        this.curBoard = curBoard;
         utilities = new Connect4Utilities(maxRow, maxCol);
         return evaluateMove();
 
@@ -65,14 +66,14 @@ public class ConnectedCountScore implements IHeuristic {
         scoreInfo.hasXWin = curSit.xWin;
         scoreInfo.hasOWin = curSit.oWin;
 
-        System.out.println("Score: " + scoreInfo.score);
-        utilities.printBoard(curBoard);
+        //System.out.println("Score: " + scoreInfo.score);
+        //utilities.printBoard(curBoard);
 
         return scoreInfo;        
     }
 
     private Situation checkForXinARow() {
-        System.out.println("Start checkForXinARow: " + new Date().getTime());
+        //System.out.println("Start checkForXinARow: " + new Date().getTime());
         Situation sit = new Situation();
         int count = 0;
 
@@ -86,7 +87,7 @@ public class ConnectedCountScore implements IHeuristic {
             checkPatterns(sbuilder.toString(), sit);
         }
 
-        sbuilder = new StringBuilder();
+        
         // vertical check
         for (int row = 0; row < maxRow; row++) {
             sbuilder = new StringBuilder();
@@ -95,17 +96,78 @@ public class ConnectedCountScore implements IHeuristic {
             }
             checkPatterns(sbuilder.toString(), sit);
         }
-        System.out.println("End checkForXinARow: " + new Date().getTime());
+             
+        // Left Top right bottom
+        //First loop extracts top half of diagonals:
+        for (int col = 0; col < 3; col++) {
+            sbuilder = new StringBuilder(); 
+            int tempCol = col;
+            for (int row = 0; row < maxRow; row++) {
+                if(tempCol>= maxCol)
+                    break;
+                sbuilder.append(curBoard[tempCol][row]);
+                tempCol++;
+            }
+            //System.out.println(sbuilder.toString());
+            checkPatterns(sbuilder.toString(), sit);
+        }
+        //Second loop iterates on bottom half of diagonals:
+        //First loop extracts top half of diagonals:
+        for (int row = 1; row < 3; row++) {
+            sbuilder = new StringBuilder(); 
+            int tempRow = row;
+            for (int col = 0; col < maxCol; col++) {
+                if(tempRow>= maxRow)
+                    break;
+                sbuilder.append(curBoard[col][tempRow]);
+                tempRow++;
+            }
+            //System.out.println(sbuilder.toString());
+            checkPatterns(sbuilder.toString(), sit);
+        }
+        
+                        
+        // right Top left bottom
+        //First loop extracts top half of diagonals:
+        for (int col = 6; col > 3; col--) {
+            sbuilder = new StringBuilder(); 
+            int tempCol = col;
+            for (int row = 0; row < maxRow; row++) {
+                if(tempCol < 0)
+                    break;
+                sbuilder.append(curBoard[tempCol][row]);
+                tempCol--;
+            }
+            //System.out.println(sbuilder.toString());
+            checkPatterns(sbuilder.toString(), sit);
+        }
+
+        //Second loop iterates on bottom half of diagonals:
+        //First loop extracts top half of diagonals:
+        for (int row = 1; row < 3; row++) {
+            sbuilder = new StringBuilder(); 
+            int tempRow = row;
+            for (int col = 6; col >= 0; col--) {
+                if(tempRow>= maxRow)
+                    break;
+                sbuilder.append(curBoard[col][tempRow]);
+                tempRow++;
+            }            
+            checkPatterns(sbuilder.toString(), sit);
+        }
+        
+        
+        //System.out.println("End checkForXinARow: " + new Date().getTime());
         return sit;
     }
 
     private void checkPatterns(String rowColDiag, Situation sit) {
         List<String> twoInARowPatterns = new ArrayList<String>();
-        /*twoInARowPatterns.add("-xx-");
+        twoInARowPatterns.add("-xx-");
         twoInARowPatterns.add("xx--");
         twoInARowPatterns.add("--xx");
         twoInARowPatterns.add("-x-x");
-        twoInARowPatterns.add("x-x-");*/
+        twoInARowPatterns.add("x-x-");
 
         List<String> threeInARowPatterns = new ArrayList<String>();
         twoInARowPatterns.add("-xxx");
@@ -113,7 +175,7 @@ public class ConnectedCountScore implements IHeuristic {
         twoInARowPatterns.add("xx-x");
         twoInARowPatterns.add("x-xx");
 
-        /*for (String pat : twoInARowPatterns) {
+        for (String pat : twoInARowPatterns) {
             for (int i = 0; i < 2; i++) {
                 Pattern p;
                 if (i != 0) {
@@ -131,7 +193,7 @@ public class ConnectedCountScore implements IHeuristic {
                     }
                 }
             }
-        }*/
+        }
 
         for (String pat : threeInARowPatterns) {
             for (int i = 0; i < 2; i++) {

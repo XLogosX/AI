@@ -5,6 +5,8 @@
  */
 package conn4.Utilities;
 
+import ch.hslu.ai.connect4.Game;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +40,7 @@ public class Connect4Utilities {
     public List<Integer> GetValidMoves(char[][] curSit) {
         List<Integer> ValidMoves = new ArrayList<Integer>();
         for (int col = 0; col <= maxCol - 1; col++) {
-            if (curSit[col][0] == '-') {
+            if (curSit[col][0] == Game.EMPTY) {
                 ValidMoves.add(col);
             }
         }
@@ -48,14 +50,14 @@ public class Connect4Utilities {
 
     private boolean IsMoveValid(char[][] board, int col) {
         // Row=0 couse maxRow=bottom
-        return board[col][0] == '-';
+        return board[col][0] == Game.EMPTY;
     }
 
     //removes the last move from the specified column.
     public char[][] unmove(char[][] board, int curCol) {
         for (int i = 0; i <= maxRow - 1; i++) {
-            if (board[curCol][i] != '-') {
-                board[curCol][i] = '-';
+            if (board[curCol][i] != Game.EMPTY) {
+                board[curCol][i] = Game.EMPTY;
                 break;
             }
         }
@@ -65,7 +67,7 @@ public class Connect4Utilities {
     //places a piece in the specified column for the player.
     public char[][] move(char[][] board, int curCol, char playerSymbol) {
         for (int i = maxRow - 1; i >= 0; i--) {
-            if (board[curCol][i] == '-') {
+            if (board[curCol][i] == Game.EMPTY) {
                 board[curCol][i] = playerSymbol;
                 break;
             }
@@ -74,7 +76,7 @@ public class Connect4Utilities {
     }
 
     public boolean isColumnFull(char[][] board, int column) {
-        return board[column][0] != '-';
+        return board[column][0] != Game.EMPTY;
     }
 
     public boolean hasPlayerWon(char[][] board, char playerSymbol) {
@@ -88,7 +90,7 @@ public class Connect4Utilities {
                 if (board[col][row] == board[col + 1][row]
                         && board[col][row] == board[col + 2][row]
                         && board[col][row] == board[col + 3][row]
-                        && board[col][row] != '-') {
+                        && board[col][row] == playerSymbol) {
                     win = true;
                     break;
                 }
@@ -100,7 +102,7 @@ public class Connect4Utilities {
                 if (board[col][row] == board[col][row + 1]
                         && board[col][row] == board[col][row + 2]
                         && board[col][row] == board[col][row + 3]
-                        && board[col][row] != '-') {
+                        && board[col][row] == playerSymbol) {
                     win = true;
                     break;
                 }
@@ -113,7 +115,7 @@ public class Connect4Utilities {
                 if (board[col][row] == board[col + 1][row + 1]
                         && board[col][row] == board[col + 2][row + 2]
                         && board[col][row] == board[col + 3][row + 3]
-                        && board[col][row] != '-') {
+                        && board[col][row] == playerSymbol) {
                     win = true;
                     break;
                 }
@@ -125,7 +127,7 @@ public class Connect4Utilities {
                 if (board[col][row] == board[col + 1][row - 1]
                         && board[col][row] == board[col + 2][row - 2]
                         && board[col][row] == board[col + 3][row - 3]
-                        && board[col][row] != '-') {
+                        && board[col][row] == playerSymbol) {
                     win = true;
                     break;
                 }
