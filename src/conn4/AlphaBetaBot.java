@@ -19,7 +19,7 @@ import java.util.Random;
 public class AlphaBetaBot extends Player {
 
     Random ran = new Random();
-    int maxDepth = 5;
+    int maxDepth = 3;
     int bestScore = 0;
     private int maxCols;
     private IHeuristic heuristicEvaluator;
@@ -75,7 +75,7 @@ public class AlphaBetaBot extends Player {
 
             // evaluate score
             if (score > bestScore) {
-                bestMoves.clear();;
+                bestMoves.clear();
                 bestMoves.add(col);
             } else if (score == bestScore) {
                 bestMoves.add(col);
@@ -112,7 +112,7 @@ public class AlphaBetaBot extends Player {
                 utilities.unmove(board, i);
 
                 // tested <
-                if (curAlpha > beta) {
+                if (beta < curAlpha) {
                     continue;
                 }
 
