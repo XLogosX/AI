@@ -43,36 +43,32 @@ public class ConnectedCountScore implements IHeuristic {
 
         int evalValue = 0;
 
-        evalValue += curSit.count2inArowX * 50 * (playerSymbol == 'x' ? 1 : -1);
-        evalValue += curSit.count2inArowO * 50 * (playerSymbol == 'o' ? 1 : -1);
+        evalValue = curSit.xWin ? 100 * (playerSymbol == 'x' ? 1 : -1) : 0;
+        evalValue = curSit.oWin ? 100 * (playerSymbol == 'x' ? 1 : -1) : 0;
 
-        evalValue += curSit.count3InARowX * 75 * (playerSymbol == 'x' ? 1 : -1);
-        evalValue += curSit.count3InARowO * 75 * (playerSymbol == 'o' ? 1 : -1);
+        if (evalValue == 0) {
+            evalValue = curSit.count3InARowX_Special * 99 * (playerSymbol == 'x' ? 1 : -1);
+            evalValue += curSit.count3InARowO_Special * 99 * (playerSymbol == 'x' ? 1 : -1);
+        }
 
-        evalValue += curSit.count3InARowX_Special * 99 * (playerSymbol == 'x' ? 1 : -1);
-        evalValue += curSit.count3InARowO_Special * 99 * (playerSymbol == 'x' ? 1 : -1);
+        if (evalValue == 0) {
+            evalValue = curSit.count3InARowX * 75 * (playerSymbol == 'x' ? 1 : -1);
+            evalValue += curSit.count3InARowO * 75 * (playerSymbol == 'o' ? 1 : -1);
+        }
+
+        if (evalValue == 0) {
+            evalValue = curSit.count2inArowX * 50 * (playerSymbol == 'x' ? 1 : -1);
+            evalValue += curSit.count2inArowO * 50 * (playerSymbol == 'o' ? 1 : -1);
+        }
 
         scoreInfo.score = evalValue;
-        scoreInfo.hasOWin = curSit.xWin;
+        scoreInfo.hasXWin = curSit.xWin;
         scoreInfo.hasOWin = curSit.oWin;
-        
-        System.out.println("Score: "+scoreInfo.score);
-        utilities.printBoard(curBoard);
-        
 
-        return scoreInfo;
-        // ToDo: Check for xWin oWin or 2 in a row 3 in a row!
-        /*
-         myWin=+100 (4in a Row horizontal, diagonal, vertical)!
-         my 3 in a row S = +99 (-xxx-)
-         my 3 in a Row = +75 (xx-x,-xxx-,x-xx)
-         my 2 in a row = +50 (xx,x x)
-         1and0=+0
-         op 2 in a row = -50 (xx,x x)
-         op 3 in a Row = -75 (xx x,xxx,x xx)
-         myLoss=-100 (4in a Row horizontal, diagonal, vertical)!        
-         */
-        //return (int) (Math.random() * board.length);
+        System.out.println("Score: " + scoreInfo.score);
+        utilities.printBoard(curBoard);
+
+        return scoreInfo;        
     }
 
     private Situation checkForXinARow() {
@@ -105,11 +101,11 @@ public class ConnectedCountScore implements IHeuristic {
 
     private void checkPatterns(String rowColDiag, Situation sit) {
         List<String> twoInARowPatterns = new ArrayList<String>();
-        twoInARowPatterns.add("-xx-");
+        /*twoInARowPatterns.add("-xx-");
         twoInARowPatterns.add("xx--");
         twoInARowPatterns.add("--xx");
         twoInARowPatterns.add("-x-x");
-        twoInARowPatterns.add("x-x-");
+        twoInARowPatterns.add("x-x-");*/
 
         List<String> threeInARowPatterns = new ArrayList<String>();
         twoInARowPatterns.add("-xxx");
@@ -117,7 +113,7 @@ public class ConnectedCountScore implements IHeuristic {
         twoInARowPatterns.add("xx-x");
         twoInARowPatterns.add("x-xx");
 
-        for (String pat : twoInARowPatterns) {
+        /*for (String pat : twoInARowPatterns) {
             for (int i = 0; i < 2; i++) {
                 Pattern p;
                 if (i != 0) {
@@ -135,7 +131,7 @@ public class ConnectedCountScore implements IHeuristic {
                     }
                 }
             }
-        }
+        }*/
 
         for (String pat : threeInARowPatterns) {
             for (int i = 0; i < 2; i++) {
