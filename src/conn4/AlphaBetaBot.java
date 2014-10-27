@@ -1,11 +1,5 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package conn4;
 
-//import ch.hslu.ai.connect4.Player;
 import ch.hslu.ai.connect4.Player;
 import conn4.Heuristics.ConnectedCountScore;
 import conn4.Heuristics.IHeuristic;
@@ -21,9 +15,8 @@ public class AlphaBetaBot extends Player {
 
     Random ran = new Random();
     int maxDepth = 3;
-   
-    private int maxCols;
-    private IHeuristic heuristicEvaluator;
+
+    private int maxCols, maxRows;
     private Connect4Utilities utilities;
     private int lastCol = -1;
     private int ALPHA = Integer.MIN_VALUE;
@@ -31,27 +24,16 @@ public class AlphaBetaBot extends Player {
 
     public AlphaBetaBot(String name, char symbol) {
         super(name, symbol);
-        heuristicEvaluator = new ConnectedCountScore();
     }
 
     @Override
     public int play(char[][] board) {
 
         maxCols = board.length;
-        int maxRows = board[0].length;
-
+        maxRows = board[0].length;
         utilities = new Connect4Utilities(maxRows, maxCols);
-        //int col = alphabeta(board, maxDepth, maxDepth, maxDepth, currentPlayer, true)
         lastCol = requestMove(board);
 
-        System.out.println("Column played: "+lastCol);
-        
-        if(utilities.isColumnFull(board, lastCol)){
-            System.out.println("WTF");
-        }
-        
-        
-        utilities.printBoard(board);
         return lastCol;
     }
 
@@ -59,14 +41,11 @@ public class AlphaBetaBot extends Player {
         if (lastCol == -1) {
             return 3;
         }
-        
-        
-        int bestScore = Integer.MIN_VALUE;
-        ArrayList<Integer> bestMoves = new ArrayList();
 
-        //int ALPHA = Integer.MIN_VALUE;
-        //int BETA = Integer.MAX_VALUE;
+        int bestScore = Integer.MIN_VALUE;
         int score = 0;
+
+        ArrayList<Integer> bestMoves = new ArrayList();
 
         ArrayList<String> Symbols = new ArrayList<>();
         Symbols.add("x");
@@ -77,6 +56,7 @@ public class AlphaBetaBot extends Player {
                 if (utilities.isColumnFull(board, col)) {
                     continue;
                 }
+                
                 // do move
                 utilities.move(board, col, symbol.charAt(0));
                 // check if player has Won else use minmax
@@ -90,7 +70,6 @@ public class AlphaBetaBot extends Player {
         }
 
         for (int col = 0; col < maxCols; col++) {
-
             if (utilities.isColumnFull(board, col)) {
                 continue;
             }
@@ -99,7 +78,6 @@ public class AlphaBetaBot extends Player {
             utilities.move(board, col, getSymbol());
             // check if player has Won else use minmax          
             score = alphabeta(board, 1, ALPHA, BETA, getSymbol() == 'x' ? 'o' : 'x', false);
-
             // undo move
             utilities.unmove(board, col);
 
@@ -107,19 +85,18 @@ public class AlphaBetaBot extends Player {
             if (score > bestScore) {
                 bestMoves.clear();
                 bestMoves.add(col);
-                bestScore=score;
+                bestScore = score;
             } else if (score == bestScore) {
                 bestMoves.add(col);
             }
-
         }
 
         // return best move or random if there are more than 1
         if (bestMoves.size() == 1) {
             return bestMoves.get(0);
-        } else if(bestMoves.size()>0){
+        } else if (bestMoves.size() > 0) {
             return bestMoves.get(ran.nextInt(bestMoves.size()));
-        }else{
+        } else {
             RuntimeException runtimeException = new RuntimeException("WTFFFFFF=======???????");
             throw runtimeException;
         }
@@ -141,11 +118,8 @@ public class AlphaBetaBot extends Player {
 
                 utilities.move(board, i, currentPlayer);
                 int curAlpha = alphabeta(board, depth + 1, alpha, beta, currentPlayer == 'x' ? 'o' : 'x', !maximize);
-                //heuristicEvaluator.evaluate(board, currentPlayer).score;
-
                 utilities.unmove(board, i);
-
-                // tested <
+                // pruning
                 if (beta < curAlpha) {
                     continue;
                 }
@@ -154,25 +128,18 @@ public class AlphaBetaBot extends Player {
                     alpha = curAlpha;
                     bestScores.clear();;
                     bestScores.add(curAlpha);
-//                    bestScores.add(i);
-                }/*else if(curAlpha==alpha){
-                 bestScores.add(i);
-                 }                */
-
+                }
             }
         } else {
             for (int i = 0; i < maxCols; i++) {
-                
                 if (utilities.isColumnFull(board, i)) {
                     continue;
                 }
 
                 utilities.move(board, i, currentPlayer);
                 int curBeta = alphabeta(board, depth + 1, alpha, beta, currentPlayer == 'x' ? 'o' : 'x', !maximize);
-                //heuristicEvaluator.evaluate(board, currentPlayer).score;
                 utilities.unmove(board, i);
-
-                // tested >
+                // pruning
                 if (curBeta < alpha) {
                     continue;
                 }
@@ -181,11 +148,7 @@ public class AlphaBetaBot extends Player {
                     beta = curBeta;
                     bestScores.clear();;
                     bestScores.add(curBeta);
-                    // bestScores.add(i);
-                }/*else if(curBeta==beta){
-                 bestScores.add(i);
-                 }                */
-
+                }
             }
         }
 
