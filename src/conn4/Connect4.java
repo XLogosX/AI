@@ -8,7 +8,6 @@ import java.util.TreeSet;
 
 import ch.hslu.ai.connect4.Game;
 import ch.hslu.ai.connect4.GameBoard;
-//import ch.hslu.ai.connect4.Player;
 
 /**
  * Main class with connect-4 single game and tournament mode.

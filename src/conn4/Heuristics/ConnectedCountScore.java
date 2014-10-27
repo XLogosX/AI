@@ -5,11 +5,9 @@
  */
 package conn4.Heuristics;
 
-import ch.hslu.ai.connect4.Game;
 import conn4.Situation;
 import conn4.Utilities.Connect4Utilities;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
